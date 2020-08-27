@@ -12,6 +12,5 @@ before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS testdb;'
 deploy:
   provider: heroku
-  api_key:
-    secure: $HEROKU_API_KEY
+  api_key: $HEROKU_API_KEY
   strategy: git
