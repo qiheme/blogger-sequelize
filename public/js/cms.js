@@ -1,17 +1,17 @@
-$(document).ready(function() {
+$(document).ready(() => {
   // Getting jQuery references to the post body, title, form, and author select
-  var bodyInput = $("#body");
-  var titleInput = $("#title");
-  var cmsForm = $("#cms");
-  var authorSelect = $("#author");
+  const bodyInput = $("#body");
+  const titleInput = $("#title");
+  const cmsForm = $("#cms");
+  const authorSelect = $("#author");
   // Adding an event listener for when the form is submitted
   $(cmsForm).on("submit", handleFormSubmit);
   // Gets the part of the url that comes after the "?" (which we have if we're updating a post)
-  var url = window.location.search;
-  var postId;
-  var authorId;
+  const url = window.location.search;
+  let postId;
+  let authorId;
   // Sets a flag for whether or not we're updating a post to be false initially
-  var updating = false;
+  let updating = false;
 
   // If we have this section in our url, we pull out the post id from the url
   // In '?post_id=1', postId is 1
@@ -31,17 +31,17 @@ $(document).ready(function() {
   function handleFormSubmit(event) {
     event.preventDefault();
     // Wont submit the post if we are missing a body, title, or author
-    if (!titleInput.val().trim() || !bodyInput.val().trim() || !authorSelect.val()) {
+    if (
+      !titleInput.val().trim() ||
+      !bodyInput.val().trim() ||
+      !authorSelect.val()
+    ) {
       return;
     }
     // Constructing a newPost object to hand to the database
-    var newPost = {
-      title: titleInput
-        .val()
-        .trim(),
-      body: bodyInput
-        .val()
-        .trim(),
+    const newPost = {
+      title: titleInput.val().trim(),
+      body: bodyInput.val().trim(),
       AuthorId: authorSelect.val()
     };
 
@@ -50,22 +50,22 @@ $(document).ready(function() {
     if (updating) {
       newPost.id = postId;
       updatePost(newPost);
-    }
-    else {
+    } else {
       submitPost(newPost);
     }
   }
 
   // Submits a new post and brings user to blog page upon completion
   function submitPost(post) {
-    $.post("/api/posts", post, function() {
+    $.post("/api/posts", post, () => {
       window.location.href = "/blog";
     });
   }
 
   // Gets post data for the current post if we're editing, or if we're adding to an author's existing posts
   function getPostData(id, type) {
-    var queryUrl;
+    /* eslint-disable */
+    let queryUrl;
     switch (type) {
     case "post":
       queryUrl = "/api/posts/" + id;
@@ -76,7 +76,7 @@ $(document).ready(function() {
     default:
       return;
     }
-    $.get(queryUrl, function(data) {
+    $.get(queryUrl, data => {
       if (data) {
         console.log(data.AuthorId || data.id);
         // If this post exists, prefill our cms forms with its data
@@ -101,8 +101,8 @@ $(document).ready(function() {
       window.location.href = "/authors";
     }
     $(".hidden").removeClass("hidden");
-    var rowsToAdd = [];
-    for (var i = 0; i < data.length; i++) {
+    const rowsToAdd = [];
+    for (let i = 0; i < data.length; i++) {
       rowsToAdd.push(createAuthorRow(data[i]));
     }
     authorSelect.empty();
@@ -114,7 +114,7 @@ $(document).ready(function() {
 
   // Creates the author options in the dropdown
   function createAuthorRow(author) {
-    var listOption = $("<option>");
+    const listOption = $("<option>");
     listOption.attr("value", author.id);
     listOption.text(author.name);
     return listOption;
@@ -126,9 +126,8 @@ $(document).ready(function() {
       method: "PUT",
       url: "/api/posts",
       data: post
-    })
-      .then(function() {
-        window.location.href = "/blog";
-      });
+    }).then(() => {
+      window.location.href = "/blog";
+    });
   }
 });
